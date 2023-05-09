@@ -5,6 +5,7 @@ import WelcomeScreen from './WelcomeScreen';
 import Introduction from './Introduction';
 import UserGuide from './UserGuide';
 import Connection from './Connection';
+import Activity from './Activity';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,11 @@ function App() {
           name="Connection"
           component={Connection}
           options={{ title: 'Connection' }}
+        />
+        <Stack.Screen
+          name="Activity"
+          component={Activity}
+          options={{ title: 'Activity' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
