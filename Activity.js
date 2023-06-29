@@ -1,13 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
+import cors from 'cors';
+import RNHttpServer from 'react-native-http-server';
 
 const Activity = () => {
   const [objects, setObjects] = useState([]);
 
+  // HTTP RECEIVE
+  const { RNHttpServer } = NativeModules;
+  const eventEmitter = new NativeEventEmitter(RNHttpServer);
+
   useEffect(() => {
+    const serverOptions = {
+      www_root: '/',
+      port: 8000,
+      localhost_only: false,
+      keep_alive: true,
+      max_connections: 10,
+      silent: true,
+      };
+
+    RNHttpServer.startServer(serverOptions);
+
+    const subscription = eventEmitter.addListener(
+      'onServerStarted',
+      (event) => {
+        console.log('HTTP server started:', event);
+      }
+    );
+
+    return () => {
+      subscription.remove();
+      RNHttpServer.stopServer();
+    };
+  }, []);
+
+
+  useEffect(() => {
+    // a timer of 2second that repeat excecute
     const intervalId = setInterval(() => {
-      const numObjects = Math.floor(Math.random() * 6);
-      const newObjects = Array.from({ length: numObjects }, () => {
+        const numObjects = Math.floor(Math.random() * 6);
+        const newObjects = Array.from({ length: numObjects }, () => {
         const x = Math.floor(Math.random() * 98) + 1;
         const y = Math.floor(Math.random() * 98) + 1;
         return { x, y };

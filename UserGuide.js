@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
 
 function UserGuide({ navigation }) {
   return (
     <View style={styles.container}>
+      <ScrollView>
       <Text style={styles.title}>User Guide</Text>
       <Text style={styles.subtitle}>How to use WOLO</Text>
       <Text style={styles.paragraph}>
@@ -39,6 +40,7 @@ function UserGuide({ navigation }) {
         title="Go to Connection Page"
         onPress={() => navigation.navigate('Connection')}
       />
+      </ScrollView>
     </View>
   );
 }
