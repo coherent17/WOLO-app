@@ -1,41 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import cors from 'cors';
-import RNHttpServer from 'react-native-http-server';
+import { StyleSheet, View, Text } from 'react-native';
+import { NativeEventEmitter, NativeModules } from 'react-native';
+
+const { RNHttpServer } = NativeModules;
+const eventEmitter = new NativeEventEmitter(RNHttpServer);
+
 
 const Activity = () => {
   const [objects, setObjects] = useState([]);
+  // const [data, setData] = useState(null);
 
-  // HTTP RECEIVE
-  const { RNHttpServer } = NativeModules;
-  const eventEmitter = new NativeEventEmitter(RNHttpServer);
-
+  // HTTP GET
   useEffect(() => {
-    const serverOptions = {
-      www_root: '/',
-      port: 8000,
-      localhost_only: false,
-      keep_alive: true,
-      max_connections: 10,
-      silent: true,
-      };
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://192.168.2.101:8001/'); // 替换为你的 API URL
+        const json = await response.json();
+        const obj_list = json.message.split('-');
+        const newObjects = obj_list.map(item => {
+          const [x, y] = item.split(',');
+          const rx = 100 - (Math.floor(parseInt(x)/320.0 * 98) + 1);
+          const tmp = parseInt(y) > 15 ? 50 : 10;
+          const ry = 100 - (Math.floor(tmp/100.0 * 98) + 1);
+          return { rx, ry };
+        });
+        // console.log(newObjects);
+        setObjects(newObjects);
 
-    RNHttpServer.startServer(serverOptions);
-
-    const subscription = eventEmitter.addListener(
-      'onServerStarted',
-      (event) => {
-        console.log('HTTP server started:', event);
+      } catch (error) {
+        console.error(error);
       }
-    );
+    };
 
+    // 定时执行获取数据的操作
+    const interval = setInterval(fetchData, 20);
+
+    // 在组件卸载时清除定时器
     return () => {
-      subscription.remove();
-      RNHttpServer.stopServer();
+      clearInterval(interval);
     };
   }, []);
 
-
+  /*
   useEffect(() => {
     // a timer of 2second that repeat excecute
     const intervalId = setInterval(() => {
@@ -50,7 +56,7 @@ const Activity = () => {
 
     return () => clearInterval(intervalId);
   }, []);
-
+  */
   return (
     <View style={styles.container}>
       <View style={styles.car}>
@@ -59,7 +65,7 @@ const Activity = () => {
       <View style={styles.line} />
       <View style={styles.bottomRegion}>
         {objects.map((obj, i) => (
-          <View key={i} style={[styles.objectBox, { left: obj.x + '%', bottom: obj.y + '%' }]}>
+          <View key={i} style={[styles.objectBox, { left: obj.rx + '%', bottom: obj.ry + '%' }]}>
             <View style={styles.objectDot} />
           </View>
         ))}

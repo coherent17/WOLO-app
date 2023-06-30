@@ -1,16 +1,17 @@
-//HTTP SERVER
-  const express = require('express');
-  const app = express();
-  const bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-  /// app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
+const app = express();
+app.use(bodyParser.json());
 
-  app.post('', (req, res) => {
-    const Data = req.body;
-    console.log('Received data:', Data);
-  }) ;
+app.post('', (req, res) => {
+  const postData = req.body;
+  console.log('Received data:', postData);
+  // Handle the received data as needed
 
-  app.listen(8000, () => {
-    console.log('Server is running on port 8000');
-  });
+  res.send('Data received successfully');
+});
+
+app.listen(8000, () => {
+  console.log('Server is running on port 8080');
+});

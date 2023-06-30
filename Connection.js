@@ -11,7 +11,13 @@ function Connection({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>Connect to Wi-Fi</Text>
       <Text style={styles.paragraph}>
-        Please connect your device to the Wi-Fi network with the SSID: "ARC EM9D".
+        Please connect your device to the Wi-Fi network with the SSID: "RW8300_11n_AP-B00C42".
+      </Text>
+      <Text style={styles.paragraph}>
+        password: 27366939
+      </Text>
+      <Text style={styles.paragraph}>
+        And set your IP : 192.168.2.102
       </Text>
       <Button
         title="Start Riding"
