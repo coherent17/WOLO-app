@@ -1,13 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 const Activity = () => {
   const [objects, setObjects] = useState([]);
+  // const [data, setData] = useState(null);
 
+  // HTTP GET
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://192.168.2.101:8001/'); // 替换为你的 API URL
+        const json = await response.json();
+        const obj_list = json.message.split('-');
+        const newObjects = obj_list.map(item => {
+          const [x, y] = item.split(',');
+          const rx = 100 - (Math.floor(parseInt(x)/320.0 * 98) + 1);
+          // const tmp = parseInt(y) > 15 ? 50 : 10;
+          const tmp = parseInt(y);
+          const ry = 100 - (Math.floor(tmp/100.0 * 98) + 1);
+          return { rx, ry };
+        });
+
+        if(json.message == '-')
+          setObjects([]);
+        else
+        // console.log(newObjects);
+        setObjects(newObjects);
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    // 定时执行获取数据的操作
+    const interval = setInterval(fetchData, 20);
+
+    // 在组件卸载时清除定时器
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  /*
+  useEffect(() => {
+    // a timer of 2second that repeat excecute
     const intervalId = setInterval(() => {
-      const numObjects = Math.floor(Math.random() * 6);
-      const newObjects = Array.from({ length: numObjects }, () => {
+        const numObjects = Math.floor(Math.random() * 6);
+        const newObjects = Array.from({ length: numObjects }, () => {
         const x = Math.floor(Math.random() * 98) + 1;
         const y = Math.floor(Math.random() * 98) + 1;
         return { x, y };
@@ -17,7 +56,7 @@ const Activity = () => {
 
     return () => clearInterval(intervalId);
   }, []);
-
+  */
   return (
     <View style={styles.container}>
       <View style={styles.car}>
@@ -26,7 +65,7 @@ const Activity = () => {
       <View style={styles.line} />
       <View style={styles.bottomRegion}>
         {objects.map((obj, i) => (
-          <View key={i} style={[styles.objectBox, { left: obj.x + '%', bottom: obj.y + '%' }]}>
+          <View key={i} style={[styles.objectBox, { left: obj.rx + '%', bottom: obj.ry + '%' }]}>
             <View style={styles.objectDot} />
           </View>
         ))}
