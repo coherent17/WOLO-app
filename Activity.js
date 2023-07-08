@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { NativeEventEmitter, NativeModules } from 'react-native';
-
-const { RNHttpServer } = NativeModules;
-const eventEmitter = new NativeEventEmitter(RNHttpServer);
-
 
 const Activity = () => {
   const [objects, setObjects] = useState([]);
@@ -20,10 +15,15 @@ const Activity = () => {
         const newObjects = obj_list.map(item => {
           const [x, y] = item.split(',');
           const rx = 100 - (Math.floor(parseInt(x)/320.0 * 98) + 1);
-          const tmp = parseInt(y) > 15 ? 50 : 10;
+          // const tmp = parseInt(y) > 15 ? 50 : 10;
+          const tmp = parseInt(y);
           const ry = 100 - (Math.floor(tmp/100.0 * 98) + 1);
           return { rx, ry };
         });
+
+        if(json.message == '-')
+          setObjects([]);
+        else
         // console.log(newObjects);
         setObjects(newObjects);
 
